@@ -87,7 +87,7 @@ while True:
 	for y in range(0, height, line_spacing): 
 		pygame.draw.line(screen, cyan, (0,y),(width,y))
 	for ringo in ringo_list:
-		pygame.draw.rect(screen,(255,0,0),(ringo.get_x()*line_spacing,ringo.get_y()*line_spacing,line_spacing,line_spacing))
-	pygame.draw.rect(screen,(0,255,255),(myhebi.get_x(),myhebi.get_y(),20,20))
+		pygame.draw.rect(screen,(255,0,0),(ringo.get_x()*line_spacing+1,ringo.get_y()*line_spacing+1,line_spacing-1,line_spacing-1))
+	pygame.draw.rect(screen,(0,255,255),(myhebi.get_x()+1,myhebi.get_y()+1,line_spacing-1,line_spacing-1))
 	screen.blit(logo,(350,250))
 	pygame.display.flip()

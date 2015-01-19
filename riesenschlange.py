@@ -6,7 +6,7 @@ pygame.init()
 
 size = width, height = 800, 600
 black = 0,0,0
-blue = 0,0,255
+blue = 0,255,255
 line_spacing = 20
 fps = 60
 screen = pygame.display.set_mode(size)
@@ -22,8 +22,9 @@ while True:
 	# line_spacing = randint(2,500)
 	# color = (randint(1,255),randint(1,255),randint(1,255))
 	color = black
-	if pygame.key.get_pressed()[K_w]: line_spacing += 5
-	if pygame.key.get_pressed()[K_s]: line_spacing -= 5
+	keys = pygame.key.get_pressed()
+	if keys[K_w]: line_spacing += 5
+	if keys[K_s]: line_spacing -= 5
 	if line_spacing <= 0: line_spacing = 1
 	
 	for event in pygame.event.get():

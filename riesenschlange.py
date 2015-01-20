@@ -8,7 +8,7 @@ size = width, height = 801, 601
 black = 0,0,0
 cyan = 0,255,255
 line_spacing = 20
-fps = 60
+fps = 20
 screen = pygame.display.set_mode((900,700))
 pygame.display.set_caption('Riesenschlange')
 logo = pygame.image.load("logo.png").convert_alpha()
@@ -18,19 +18,38 @@ logorect = logo.get_rect()
 class Hebi:
 	def __init__(self):
 		self.x, self.y = 0,0
+		self.old_x, self.old_y = 0,0
 		self.length = 1
 		self.left = 0
 		self.right = 1
 		self.up = 2
 		self.down = 3
 		self.direction = self.right
+		self.old_direction = self.right
 		self.color = (randint(127, 255),randint(127,255),randint(127,255))
+		self.segment = None
+		
 	def get_color(self):
 		return self.color
+	def set_color(self, color):
+		self.color = color
 	def get_length(self):
 		return self.length
+	def set_direction(self, direction):
+		self.direction = direction
 	def grow(self):
 		self.length += 1
+		if self.segment:
+			self.segment.grow()
+			return
+		self.segment = Hebi()
+		hebi_list.append(self.segment)
+		self.segment.set_color(self.color)
+		self.segment.set_x(self.old_x)
+		self.segment.set_y(self.old_y)
+		self.segment.set_direction(self.direction)
+		#self.update()
+		
 	def get_x(self):
 		return self.x
 	def get_y(self):
@@ -40,12 +59,14 @@ class Hebi:
 	def set_y(self,y):
 		self.y = y
 	def move_x(self,x):
+		self.old_x = self.x
 		self.x += x
 		if self.x < 0:
 			self.x = 0
 		elif self.x >= (width-1)/line_spacing-1:
 			self.x = (width-1)/line_spacing-1
 	def move_y(self,y):
+		self.old_y = self.y
 		self.y += y
 		if self.y < 0:
 			self.y = 0
@@ -53,15 +74,19 @@ class Hebi:
 			self.y = (height-1)/line_spacing-1
 	def move_left(self):
 		self.move_x(-1)
+		self.old_direction = self.direction
 		self.direction = self.left
 	def move_right(self):
 		self.move_x(1)
+		self.old_direction = self.direction
 		self.direction = self.right
 	def move_up(self):
 		self.move_y(-1)
+		self.old_direction = self.direction
 		self.direction = self.up
 	def move_down(self):
 		self.move_y(1)
+		self.old_direction = self.direction
 		self.direction = self.down
 	def rand_dir(self):
 		self.direction = randint(0,3)
@@ -74,6 +99,9 @@ class Hebi:
 			self.move_up()
 		elif self.direction == self.down:
 			self.move_down()
+		if self.segment: 
+			self.segment.set_direction(self.old_direction)
+			self.segment.update()
 class Ringo:
 	def __init__(self):
 		self.x = randint(0,(width-1)/line_spacing-1)
@@ -96,15 +124,15 @@ myhebi = Hebi()
 
 hebi_list.append(myhebi)
 #create a bunch of hebi, just for fun
-for i in range(0,9):
-	hebi_list.append(Hebi())
+#for i in range(0,9):
+#	hebi_list.append(Hebi())
 show_logo = True
 clock = pygame.time.Clock()
 color_counter = 255 
 darkening = True
 while True:
 	clock.tick(fps)
-	if (len(ringo_list) < 5) and not(randint(0,999)%233): 
+	if (len(ringo_list) < 10) and not(randint(0,999)%3): 
 		ringo_list.append(Ringo())
 	# line_spacing = randint(2,500)
 	# color = (randint(1,255),randint(1,255),randint(1,255))
@@ -142,10 +170,11 @@ while True:
 			if ringo.get_x() == hebi.get_x() and ringo.get_y() == hebi.get_y():
 				ringo_list.remove(ringo)
 				hebi.grow()
+				break
 
 	for hebi in hebi_list:
 		hebi.update()
-		hebi.rand_dir()
+		#hebi.rand_dir()
 		pygame.draw.rect(screen,hebi.get_color(),(hebi.get_x()*line_spacing+1,hebi.get_y()*line_spacing+1,line_spacing-1,line_spacing-1))
 	if len(ringo_list) >= 5: show_logo = False 
 	if show_logo: screen.blit(logo,(350,250))

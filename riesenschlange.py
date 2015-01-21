@@ -9,7 +9,7 @@ black = 0,0,0
 cyan = 0,255,255
 line_spacing = 20
 fps = 20
-screen = pygame.display.set_mode((900,700))
+screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Riesenschlange')
 logo = pygame.image.load("logo.png").convert_alpha()
 #pygame.display.set_icon(logo)

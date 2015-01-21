@@ -116,39 +116,64 @@ class NewHebi:
 		self.direction = self.right
 		self.nexthebi = None
 	def set_x(self,x):
+		if self.nexthebi:
+			self.nexthebi.set_x(self.x)
+			#self.nexthebi.set_y(self.y)
 		self.x = x
 	def set_y(self,y):
+		if self.nexthebi:
+			#self.nexthebi.set_x(self.x)
+			self.nexthebi.set_y(self.y)
 		self.y = y
 	def get_x(self):
 		return self.x
 	def get_y(self):
 		return self.y
 	def grow(self):
+		if self.nexthebi:
+			self.nexthebi.grow()
+			return
 		self.nexthebi = NewHebi(self.x, self.y)
 		hebi_list.append(self.nexthebi)
 	def move_up(self):
+		if self.direction == self.down: return
+
 		if self.nexthebi:
 			self.nexthebi.set_y(self.y)
 			self.nexthebi.set_x(self.x)
 		self.y -= 1
+		if self.y < 0:
+			self.y = (height-1)/line_spacing-1
 		self.direction = self.up
 	def move_down(self):
+		if self.direction == self.up: return
+
 		if self.nexthebi:
 			self.nexthebi.set_y(self.y)
 			self.nexthebi.set_x(self.x)
 		self.y += 1
+		if self.y > (height-1)/line_spacing-1:
+			self.y = 0 
 		self.direction = self.down
 	def move_left(self):
+		if self.direction == self.right: return
+
 		if self.nexthebi:
 			self.nexthebi.set_y(self.y)
 			self.nexthebi.set_x(self.x)
 		self.x -= 1
+		if self.x < 0:
+			self.x = (width-1)/line_spacing-1
 		self.direction = self.left
 	def move_right(self):
+		if self.direction == self.left: return
+
 		if self.nexthebi:
 			self.nexthebi.set_y(self.y)
 			self.nexthebi.set_x(self.x)
 		self.x += 1
+		if self.x > (width-1)/line_spacing-1:
+			self.x = 0
 		self.direction = self.right
 	def update(self):
 		if self.direction == self.left:
@@ -224,16 +249,13 @@ while True:
 
 	for ringo in ringo_list:
 		pygame.draw.rect(screen,(255,0,0),(ringo.get_x()*line_spacing+1,ringo.get_y()*line_spacing+1,line_spacing-1,line_spacing-1))
-		for hebi in hebi_list:
-			if ringo.get_x() == hebi.get_x() and ringo.get_y() == hebi.get_y():
-				ringo_list.remove(ringo)
-				hebi.grow()
-				break
+		if ringo.get_x() == myhebi.get_x() and ringo.get_y() == myhebi.get_y():
+			ringo_list.remove(ringo)
+			myhebi.grow()
 
+	myhebi.update()
 	for hebi in hebi_list:
-		hebi.update()
-		#hebi.rand_dir()
-		pygame.draw.rect(screen,cyan,(hebi.get_x()*line_spacing+1,hebi.get_y()*line_spacing+1,line_spacing-1,line_spacing-1))
+		pygame.draw.rect(screen,(0,255,0),(hebi.get_x()*line_spacing+1,hebi.get_y()*line_spacing+1,line_spacing-1,line_spacing-1))
 	if len(ringo_list) >= 5: show_logo = False 
 	if show_logo: screen.blit(logo,(350,250))
 	pygame.display.flip()
